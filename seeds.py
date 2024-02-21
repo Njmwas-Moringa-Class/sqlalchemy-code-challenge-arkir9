@@ -1,5 +1,5 @@
 from sqlalchemy.orm import sessionmaker
-from lib.models import Restaurant, Customer, Review, engine
+from models import Restaurant, Customer, Review, engine
 
 
 Session = sessionmaker(bind=engine)

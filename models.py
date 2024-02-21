@@ -11,7 +11,6 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 
-
 class Restaurant(Base):
     __tablename__ = 'restaurants'
 
@@ -22,12 +21,13 @@ class Restaurant(Base):
     reviews = relationship("Review", back_populates="restaurant")
     customers = relationship("Customer", secondary="reviews", back_populates="restaurants")
 
-    def reviews(self):
+    def get_reviews(self):
         return [review for review in self.reviews]
 
-    def customers(self):
+    def get_customers(self):
         return [customer for customer in self.customers]
 
+    @classmethod
     def fanciest(cls):
         return session.query(cls).order_by(cls.price.desc()).first()
 
@@ -36,6 +36,7 @@ class Restaurant(Base):
 
     def __repr__(self):
         return f'Restaurant: {self.name}'
+
 
 class Customer(Base):
     __tablename__ = 'customers'
@@ -47,10 +48,10 @@ class Customer(Base):
     reviews = relationship("Review", back_populates="customer")
     restaurants = relationship("Restaurant", secondary="reviews", back_populates="customers")
 
-    def reviews(self):
+    def get_reviews(self):
         return [review for review in self.reviews]
 
-    def restaurants(self):
+    def get_restaurants(self):
         return [restaurant for restaurant in self.restaurants]
 
     def full_name(self):
@@ -79,6 +80,7 @@ class Customer(Base):
     def __repr__(self):
         return f'Customer: {self.first_name} {self.last_name}'
 
+
 class Review(Base):
     __tablename__ = 'reviews'
 
@@ -93,13 +95,11 @@ class Review(Base):
     def full_review(self):
         return f"Review for {self.restaurant.name} by {self.customer.full_name()}: {self.star_rating} stars."
 
-    def customer(self):
+    def get_customer(self):
         return self.customer
 
-    def restaurant(self):
+    def get_restaurant(self):
         return self.restaurant
 
     def __repr__(self):
         return f'Review: {self.star_rating} stars'
-
-
